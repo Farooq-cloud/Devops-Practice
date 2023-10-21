@@ -24,7 +24,7 @@ pipeline {
         stage('SCM Checkout') {
             steps {
 
-            git branch: 'main', url: 'https://github.com/Farooq-cloud/Devops-Practice.git'
+            checkout scmGit(branches: [[name: '*/Docker-Practice']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Farooq-cloud/Devops-Practice.git']])
 
 
             }
@@ -83,7 +83,7 @@ pipeline {
         stage('SCM Checkout') {
             steps {
 
-            git branch: 'main', url: 'https://github.com/Farooq-cloud/Devops-Practice.git'
+            checkout scmGit(branches: [[name: '*/Docker-Practice']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Farooq-cloud/Devops-Practice.git']])
 
 
             }
