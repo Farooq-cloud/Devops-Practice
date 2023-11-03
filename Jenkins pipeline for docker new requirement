@@ -1,0 +1,136 @@
+Create a Jenkins pipeline script
+
+1.  Create a docker file that should have index.html with custom hello world index html ( Apache2 or httpd)
+
+2. Build this docker file and push to docker hub using pipeline
+
+3. Each build tag it has the to take current data_buildnumber
+
+4. Post pushing this image it has to up run in slave machine using 8080 port
+
+****  def currentDate = new Date().format("yyyyMMdd-HHmmss")
+
+
+
+pipeline {
+    agent {label "Docker-node"}
+    
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('Docker-hub') // Define your Docker Hub credentials in Jenkins
+        def currentDate = new Date().format("yyyy-MM-dd-HH-mm-ss")
+    }
+    
+    stages {
+        stage('SCM Checkout') {
+            steps {
+
+            checkout scmGit(branches: [[name: '*/Docker-Practice']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Farooq-cloud/Devops-Practice.git']])
+
+
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    
+                    sh 'sudo docker build -t farooq786/my-app:${currentDate}_${BUILD_NUMBER} .'
+                    
+                }
+            }
+        }
+        
+        stage('login to Dockerhub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'Docker-hub', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR', passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW')]) {
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+          }
+        }
+
+        stage('Push Image') {
+            steps {
+
+                sh 'sudo docker push farooq786/my-app:${currentDate}_${BUILD_NUMBER}'
+                sh 'sudo docker run -d -p 80:80 --name my-app farooq786/my-app:${currentDate}_${BUILD_NUMBER}'
+            }
+
+        }
+    }
+    
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
+
+=====================================================================================================================================================================================================================
+
+
+pipeline {
+    agent {label "Docker-node"}
+    
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('Docker-hub') // Define your Docker Hub credentials in Jenkins
+        def currentDate = new Date().format("yyyy-MM-dd")
+    }
+    
+    stages {
+        stage('SCM Checkout') {
+            steps {
+
+            checkout scmGit(branches: [[name: '*/Docker-Practice']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Farooq-cloud/Devops-Practice.git']])
+
+
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    
+                    sh 'sudo docker build -t farooq786/my-app:${currentDate}_${BUILD_NUMBER} .'
+                    
+                }
+            }
+        }
+        
+        stage('login to Dockerhub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'Docker-hub', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR', passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW')]) {
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+          }
+        }
+        
+        stage('Stop and Remove Old Container') {
+            steps {
+                sh 'sudo docker stop my-app || true'  // Stop the container if it exists, ignoring errors
+                sh 'sudo docker rm my-app || true'    // Remove the container if it exists, ignoring errors
+            }
+        }
+
+        stage('Push Run New Image') {
+            steps {
+
+                sh 'sudo docker push farooq786/my-app:${currentDate}_${BUILD_NUMBER}'
+                sh 'sudo docker run -d -p 80:80 --name my-app farooq786/my-app:${currentDate}_${BUILD_NUMBER}'
+            }
+
+        }
+    }
+    
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
+

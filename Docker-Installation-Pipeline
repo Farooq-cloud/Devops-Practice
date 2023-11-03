@@ -1,0 +1,66 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Install Docker') {
+            steps {
+                sh 'sudo apt update'
+                sh 'sudo apt install -y apt-transport-https ca-certificates curl software-properties-common'
+                sh 'curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg'
+                sh 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null'
+                sh 'sudo apt update'
+                sh 'sudo apt install -y docker-ce docker-ce-cli containerd.io'
+                sh 'sudo systemctl enable docker'
+                sh 'docker --version'
+                sh 'sudo docker run hello-world'
+            }
+        }
+    }
+
+    post {
+        success {
+            // This block runs when the pipeline succeeds
+            echo 'Docker installed successfully!'
+        }
+        failure {
+            // This block runs when the pipeline fails
+            echo 'Docker installation failed!'
+        }
+    }
+}
+
+=================================================================================================================================
+
+pipeline {
+    agent {
+        label 'Docker-node'
+    }
+    stages {
+        stage('Install Docker') {
+            steps {
+                sh 'sudo apt update'
+                sh 'sudo apt install -y apt-transport-https ca-certificates curl software-properties-common'
+                sh 'curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg'
+                sh 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null'
+                sh 'sudo apt update'
+                sh 'sudo apt install -y docker-ce docker-ce-cli containerd.io'
+                sh 'sudo systemctl enable docker'
+                sh 'docker --version'
+                sh 'sudo docker run hello-world'
+                sh 'docker images'
+                sh 'docker ps -a'
+            }
+        }
+    }
+
+    post {
+        success {
+            // This block runs when the pipeline succeeds
+            echo 'Docker installed successfully!'
+        }
+        failure {
+            // This block runs when the pipeline fails
+            echo 'Docker installation failed!'
+        }
+    }
+}
