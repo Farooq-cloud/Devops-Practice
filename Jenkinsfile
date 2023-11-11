@@ -2,7 +2,7 @@ pipeline {
     agent {label "Docker-node"}
 
     environment {
-        AWS_CREDENTIALS = credentials('your-aws-credential-id')
+        AWS_CREDENTIALS = credentials('ECR-CRED')
     }
 
     stages {
