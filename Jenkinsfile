@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('SCM Checkout') {
             steps {
-                checkout scmGit(branches: [[name: '*/ECR-Testing']], extensions: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/Farooq-cloud/Terraform-Practice.git']])
+                checkout scmGit(branches: [[name: '*/ECR-Testing']], extensions: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/Farooq-cloud/Devops-Practice.git']])
             }
         }
 
