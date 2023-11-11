@@ -21,13 +21,13 @@ pipeline {
                         sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 097348731047.dkr.ecr.ap-south-1.amazonaws.com"
 
                         // Build Docker image
-                        sh "docker build -t farooq:latest ."
+                        sh "sudo docker build -t farooq:latest ."
 
                         // Tag the Docker image for ECR
-                        sh "docker tag farooq:latest 097348731047.dkr.ecr.ap-south-1.amazonaws.com/farooq:latest"
+                        sh "sudo docker tag farooq:latest 097348731047.dkr.ecr.ap-south-1.amazonaws.com/farooq:latest"
 
                         // Push the Docker image to ECR
-                        sh "docker push 097348731047.dkr.ecr.ap-south-1.amazonaws.com/farooq:latest"
+                        sh "sudo docker push 097348731047.dkr.ecr.ap-south-1.amazonaws.com/farooq:latest"
                     }
                 }
             }
