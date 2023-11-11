@@ -18,7 +18,7 @@ pipeline {
                     // Use AWS credentials from environment variables
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'ECR-CRED', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                         // Authenticate Docker with ECR using AWS credentials
-                        sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 097348731047.dkr.ecr.ap-south-1.amazonaws.com"
+                        sh "aws ecr get-login-password --region ap-south-1 | sudo docker login --username AWS --password-stdin 097348731047.dkr.ecr.ap-south-1.amazonaws.com"
 
                         // Build Docker image
                         sh "sudo docker build -t farooq:latest ."
