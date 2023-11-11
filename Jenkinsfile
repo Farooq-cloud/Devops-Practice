@@ -1,5 +1,5 @@
 pipeline {
-    agent any {label "Docker-node"}
+    agent {label "Docker-node"}
 
     environment {
         AWS_CREDENTIALS = credentials('your-aws-credential-id')
